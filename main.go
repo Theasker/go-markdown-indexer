@@ -16,6 +16,13 @@ type MarkdownFile struct {
 	RelPath string
 }
 
+type Node struct {
+	Name     string
+	IsDir    bool
+	File     *MarkdownFile
+	Children []*Node
+}
+
 func main() {
 	// Verificación de argumentos
 	if len(os.Args) < 2 {
@@ -70,7 +77,8 @@ func main() {
 		}
 		return nil // Continuar con el siguiente elemento
 	})
-	godump.Dump(mdFiles)
+	// godump.Dump(mdFiles)
+	recorrerFicheros(mdFiles)
 
 	if err != nil {
 		fmt.Println("Error al recorrer:", err)
@@ -98,4 +106,24 @@ func extractTitle(path string) (string, error) {
 	// Si no se ha devuelto el título
 	namefile := strings.TrimSuffix(filepath.Base(path), ".md")
 	return namefile, nil
+}
+
+func (n *Node) getOrCreateChild(name string, isDir bool) *Node {
+	panic("no codificado")
+}
+
+func addFileToTree(root *Node, file MarkdownFile) {
+	var splitPath []string = strings.Split(file.RelPath, "/")
+	for idx, part_of_route := range splitPath {
+		if (len(part_of_route) - 1) == idx {
+			panic("no implementado")
+		}
+	}
+}
+
+func recorrerFicheros(mdFiles []MarkdownFile) {
+	for _, item := range mdFiles {
+		var partPath []string = strings.Split(item.RelPath, "/")
+		godump.Dump(item, partPath)
+	}
 }
