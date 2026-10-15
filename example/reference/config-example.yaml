@@ -1,0 +1,9 @@
+# Example configuration for md-indexer
+source: ./my-notes
+output: index.db
+workers: 4
+batch_size: 500
+exclude:
+  - node_modules
+  - .git
+  - vendor

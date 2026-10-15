@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "md-indexer config",
+  "type": "object",
+  "required": ["source"],
+  "properties": {
+    "source": { "type": "string" },
+    "output": { "type": "string", "default": "index.db" },
+    "workers": { "type": "integer", "minimum": 1 },
+    "batch_size": { "type": "integer", "minimum": 1, "default": 500 },
+    "exclude": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+Pipeline overview (ASCII):
+
+  [source dir] --> walk --> parse --> [SQLite FTS5 index]
+       |                          ^
+       +---- exclude globs -------+
