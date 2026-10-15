@@ -1,12 +1,20 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/goforj/godump"
 )
+
+type MarkdownFile struct {
+	Title   string
+	RelPath string
+}
 
 func main() {
 	// Verificación de argumentos
@@ -30,7 +38,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Recorrer el path
+	// Recorrer el árbol completo
+	var mdFiles []MarkdownFile
 	err = filepath.WalkDir(sourcePath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -44,13 +53,49 @@ func main() {
 				return nil
 			}
 			cleanPath := filepath.ToSlash(path)
-			println("[Markdown válido]: " + cleanPath)
+			// Obtengo la ruta relativa
+			relPath, err := filepath.Rel(sourcePath, cleanPath)
+			if err != nil {
+				return err
+			}
+			cleanRelPath := filepath.ToSlash(relPath)
+			if strings.ToLower(cleanRelPath) == "index.md" {
+				return nil
+			}
+			title, err := extractTitle(cleanPath)
+			if err != nil {
+				fmt.Println("Ha habido algun error")
+			}
+			mdFiles = append(mdFiles, MarkdownFile{Title: title, RelPath: cleanRelPath})
 		}
-
 		return nil // Continuar con el siguiente elemento
 	})
+	godump.Dump(mdFiles)
 
 	if err != nil {
 		fmt.Println("Error al recorrer:", err)
 	}
+}
+
+func extractTitle(path string) (string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if rest, found := strings.CutPrefix(line, "# "); found {
+			return rest, nil
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+
+	// Si no se ha devuelto el título
+	namefile := strings.TrimSuffix(filepath.Base(path), ".md")
+	return namefile, nil
 }
