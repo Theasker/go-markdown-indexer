@@ -1,20 +1,38 @@
 package main
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/goforj/godump"
-)
-
 type MarkdownFile struct {
 	Title   string
 	RelPath string
 }
 
-type Elemento struct {
-	Nombre string
-	Hijos  []*Elemento
+type Node struct {
+	Name     string        // Nombre ("docs", "guia.md", etc.)
+	IsDir    bool          // Si es directorio o no
+	File     *MarkdownFile // {Title, RelPath} =>nil si es carpeta; si es archivo, apunta a sus datos
+	Children []*Node       // Lista de punteros a sus hijos (carpetas o archivos)
+}
+
+// Busca si `n' ya tiene un hijo con ese nombre.
+// Si existe, lo devuelve. Sino, lo crea, lo guarda en su hijos y lo devuelve
+func (n *Node) getOrCreateChild(name string, isDir bool) *Node {
+	// 1. Buscamos si ya existe entre los hijos actuales
+	for _, child := range n.Children {
+		if child.Name == name {
+			return child // Lo encontramos, devolvemos el puntero o ese hijo
+		}
+	}
+
+	// 2. Si llegamosa aqui, no existía. Creamos un nuevo nodo en memoria con &
+	nuevo := &Node{
+		Name:  name,
+		IsDir: isDir,
+	}
+
+	// 3. Lo enganchamos a la lista de hijos del nodo actual
+	n.Children = append(n.Children, nuevo)
+
+	// 4. Devolvemos el puntero al nuevo nodo para poder avanzar hacia el
+	return nuevo
 }
 
 func main() {
@@ -24,29 +42,8 @@ func main() {
 		{Title: "Configuración del Sistema", RelPath: "config/settings.json"},
 		{Title: "Variables de Entorno", RelPath: "config/.env.example"},
 		{Title: "Esquema de Base de Datos", RelPath: "database/schema.sql"},
-		{Title: "Punto de Entrada", RelPath: "src/main.go"},
-		{Title: "Utilidades de Red", RelPath: "src/utils/network.go"},
-		{Title: "Controlador de Rutas", RelPath: "src/handlers/routes.go"},
-		{Title: "Pruebas Unitarias", RelPath: "tests/main_test.go"},
 		{Title: "Documentación de la API", RelPath: "docs/markdown/api.md"},
 		{Title: "Registro de Cambios", RelPath: "CHANGELOG.md"},
 		{Title: "Licencia", RelPath: "LICENSE"},
-		{Title: "Guía de Contribución", RelPath: "CONTRIBUTING.md"},
 	}
-	raiz := &Elemento{Nombre: "raiz"} // Creamos el nodo raíz usando & para obtener su puntero
-
-	ruta := "fotos/viaje"
-	partes := strings.Split(ruta, "/") // ["fotos", "viaje"]
-
-	// Agregamos el primer nivel
-	nodoFotos := &Elemento{Nombre: partes[0]}
-	raiz.Hijos = append(raiz.Hijos, nodoFotos)
-
-	// Agregamos el segundo nivel dentro de fotos
-	nodoViaje := &Elemento{Nombre: partes[1]}
-	nodoFotos.Hijos = append(nodoFotos.Hijos, nodoViaje)
-
-	fmt.Printf("Raíz: %s -> Hijo: %s -> Subhijo: %s\n",
-		raiz.Nombre, raiz.Hijos[0].Nombre, raiz.Hijos[0].Hijos[0].Nombre)
-	godump.Dump(raiz)
 }
