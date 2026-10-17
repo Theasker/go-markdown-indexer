@@ -1,0 +1,22 @@
+[
+  {
+    "label": "dlv: debug main.go",
+    "command": "dlv",
+    "args": [
+      "debug",
+      "./main.go"
+    ],
+    "env": {},
+    "use_process_substitution": false
+  },
+  {
+    "label": "dlv: debug pruebas/arbolDir03.go",
+    "command": "dlv",
+    "args": [
+      "debug",
+      "./pruebas/arbolDir03.go"
+    ],
+    "env": {},
+    "use_process_substitution": false
+  }
+]

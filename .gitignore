@@ -25,3 +25,6 @@ go.work.sum
 
 # env file
 .env
+
+# Delve debug binaries (created by `dlv debug` / `delve-shim-dap`)
+__debug_bin*

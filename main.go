@@ -23,16 +23,18 @@ type Node struct {
 	Children []*Node
 }
 
-func main() {
-	// Verificación de argumentos
+// Verificación de argumentos
+func checkArgs() {
 	if len(os.Args) < 2 {
 		fmt.Println("Error: Falta el nombre")
 		os.Exit(1)
 	} else if len(os.Args) > 2 {
 		fmt.Println("Warning: Se ha introducido más de 1 parámetro y se usará sólo el primero.")
 	}
+}
 
-	// Verificación del path
+// Verificación del path
+func checkPath() string {
 	sourcePath := os.Args[1]
 	fmt.Println("Ruta recibida para indexar:", sourcePath)
 	info, err := os.Stat(sourcePath)
@@ -44,10 +46,16 @@ func main() {
 		fmt.Println("Error: La ruta especificada no es un directorio")
 		os.Exit(1)
 	}
+	return sourcePath
+}
+
+func main() {
+	checkArgs()
+	sourcePath := checkPath()
 
 	// Recorrer el árbol completo
 	var mdFiles []MarkdownFile
-	err = filepath.WalkDir(sourcePath, func(path string, d fs.DirEntry, err error) error {
+	err := filepath.WalkDir(sourcePath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
