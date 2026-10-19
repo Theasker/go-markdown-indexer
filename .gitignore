@@ -19,6 +19,7 @@
 # vendor/
 documentacion/
 example/
+bin/
 
 # Go workspace file
 go.work
