@@ -58,9 +58,8 @@ func main() {
 		partesRuta := strings.Split(ruta.RelPath, "/")
 		cursor = raiz // Al terminar cada iteración, volvemos a la raíz
 		for idx, parte := range partesRuta {
-			// Si es la última parte de la ruta = fichero
-			fmt.Println(partesRuta, "->", parte, "->", len(partesRuta)-1, idx)
-			copiaRuta := &ruta // Hacemos una copia local única para este archivo
+			fmt.Println(partesRuta, "->", parte, "->", len(partesRuta)-1, idx) // Si es la última parte de la ruta = fichero
+			copiaRuta := &ruta                                                 // Hacemos una copia local única para este archivo
 			if (len(partesRuta) - 1) == idx {
 				newFile := &Node{
 					Name:     parte,

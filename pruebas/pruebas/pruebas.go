@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"strings"
+)
+
 type MarkdownFile struct {
 	Title   string
 	RelPath string
@@ -14,7 +19,7 @@ type Node struct {
 
 // Busca si `n' ya tiene un hijo con ese nombre.
 // Si existe, lo devuelve. Sino, lo crea, lo guarda en su hijos y lo devuelve
-func (n *Node) getOrCreateChild(name string, isDir bool) *Node {
+func (n *Node) getOrCreateChild(name string) *Node {
 	// 1. Buscamos si ya existe entre los hijos actuales
 	for _, child := range n.Children {
 		if child.Name == name {
@@ -25,7 +30,7 @@ func (n *Node) getOrCreateChild(name string, isDir bool) *Node {
 	// 2. Si llegamosa aqui, no existía. Creamos un nuevo nodo en memoria con &
 	nuevo := &Node{
 		Name:  name,
-		IsDir: isDir,
+		IsDir: true,
 	}
 
 	// 3. Lo enganchamos a la lista de hijos del nodo actual
@@ -36,7 +41,7 @@ func (n *Node) getOrCreateChild(name string, isDir bool) *Node {
 }
 
 func main() {
-	var archivos = []MarkdownFile{
+	var rutas = []MarkdownFile{
 		{Title: "Página Principal", RelPath: "docs/markdown/index.md"},
 		{Title: "Guía de Instalación", RelPath: "docs/markdown/guia-instalacion.md"},
 		{Title: "Configuración del Sistema", RelPath: "config/settings.json"},
@@ -45,5 +50,14 @@ func main() {
 		{Title: "Documentación de la API", RelPath: "docs/markdown/api.md"},
 		{Title: "Registro de Cambios", RelPath: "CHANGELOG.md"},
 		{Title: "Licencia", RelPath: "LICENSE"},
+	}
+
+	raiz := &Node{Name: "raiz", IsDir: true}
+	cursor := raiz
+	_ = cursor // TODO: usar el cursor para recorrer cada ruta y crear los nodos
+
+	for _, ruta := range rutas {
+		splitRuta := strings.Split(ruta.RelPath, "/")
+		fmt.Println(splitRuta)
 	}
 }
